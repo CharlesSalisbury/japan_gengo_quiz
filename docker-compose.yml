@@ -3,10 +3,10 @@ services:
     image: nginx:alpine
     container_name: n5drill
     restart: unless-stopped
-    volumes:
-      - /opt/n5drill/index.html:/usr/share/nginx/html/index.html:ro
-      - /opt/n5drill/app.js:/usr/share/nginx/html/app.js:ro
-      - /opt/n5drill/default.conf:/etc/nginx/conf.d/default.conf:ro
+    # volumes:
+    #   - /opt/n5drill/index.html:/usr/share/nginx/html/index.html:ro
+    #   - /opt/n5drill/app.js:/usr/share/nginx/html/app.js:ro
+    #   - /opt/n5drill/default.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
       - "8088:80"
     healthcheck:
