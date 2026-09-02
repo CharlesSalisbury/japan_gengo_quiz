@@ -1,5 +1,6 @@
 services:
   n5drill:
+    build: .
     image: nginx:alpine
     container_name: n5drill
     restart: unless-stopped
