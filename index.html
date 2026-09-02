@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141d33">
+<title>N5 Grammar Drill</title>
+<style>
+  :root{
+    --ground:#141d33;
+    --raised:#1c2745;
+    --edge:#2b3860;
+    --ink:#eef1f8;
+    --muted:#8f9cc0;
+    --gold:#e0a83c;
+    --right:#5fc79b;
+    --wrong:#e5786c;
+    --jp:"Hiragino Mincho ProN","Yu Mincho",YuMincho,"Noto Serif JP","Songti SC","MS Mincho",serif;
+    --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.55;
+    -webkit-text-size-adjust:100%;
+    padding:0 20px calc(48px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:34rem;margin:0 auto}
+  button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:2px}
+
+  /* masthead */
+  header{padding:38px 0 26px}
+  .mark{
+    font-family:var(--jp);
+    font-size:44px;
+    line-height:1;
+    letter-spacing:.06em;
+    color:var(--gold);
+  }
+  .sub{margin-top:10px;color:var(--muted);font-size:15px}
+
+  /* day list */
+  .day{
+    display:block;width:100%;text-align:left;
+    padding:20px 0;
+    border-top:1px solid var(--edge);
+  }
+  .day:last-of-type{border-bottom:1px solid var(--edge)}
+  .day-top{display:flex;align-items:baseline;gap:12px}
+  .num{
+    font-size:13px;color:var(--gold);
+    font-variant-numeric:tabular-nums;
+    min-width:2.6em;
+  }
+  .theme{font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .score{margin-left:auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .score.done{color:var(--right)}
+  .points{
+    font-family:var(--jp);
+    font-size:21px;
+    line-height:1.7;
+    color:var(--ink);
+    opacity:.82;
+    margin-top:8px;
+    word-break:keep-all;
+  }
+  .points span::after{content:"・";opacity:.4;padding:0 .1em}
+  .points span:last-child::after{content:""}
+
+  .foot{margin-top:32px;color:var(--muted);font-size:14px;line-height:1.65}
+
+  /* quiz */
+  .bar{display:flex;align-items:center;gap:14px;padding:26px 0 20px}
+  .back{color:var(--muted);font-size:15px;padding:6px 0}
+  .ticks{display:flex;gap:5px;margin-left:auto}
+  .tick{width:9px;height:9px;border-radius:50%;border:1px solid var(--edge)}
+  .tick.hit{background:var(--right);border-color:var(--right)}
+  .tick.miss{background:var(--wrong);border-color:var(--wrong)}
+  .tick.now{border-color:var(--gold)}
+
+  .count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .prompt{font-size:19px;line-height:1.5;margin:14px 0 0;font-weight:500}
+  .target{
+    font-family:var(--jp);
+    font-size:33px;line-height:1.5;
+    margin:20px 0 0;
+    letter-spacing:.02em;
+  }
+  .opts{margin-top:26px;display:flex;flex-direction:column;gap:10px}
+  .opt{
+    display:block;width:100%;text-align:left;
+    padding:15px 17px;
+    border:1px solid var(--edge);
+    border-radius:10px;
+    background:var(--raised);
+    min-height:56px;
+    transition:border-color .12s ease, background .12s ease;
+  }
+  .opt .ja{font-family:var(--jp);font-size:21px}
+  .opt:disabled{cursor:default}
+  .opt.picked{border-color:var(--muted)}
+  .opt.ok{border-color:var(--right);background:rgba(95,199,155,.11)}
+  .opt.no{border-color:var(--wrong);background:rgba(229,120,108,.11)}
+  .opt.dim{opacity:.45}
+
+  .why{
+    margin-top:22px;padding-top:18px;
+    border-top:1px solid var(--edge);
+    animation:rise .22s ease-out;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.why{animation:none}}
+  .verdict{font-weight:600;margin-bottom:6px}
+  .verdict.ok{color:var(--right)}
+  .verdict.no{color:var(--wrong)}
+  .why p{margin:0;color:var(--ink);opacity:.9}
+  .why .ja{font-family:var(--jp);font-size:1.15em}
+
+  .go{
+    margin-top:26px;width:100%;
+    padding:16px;border-radius:10px;
+    background:var(--gold);color:#171717;
+    font-weight:600;
+  }
+  .hintbtn{margin-top:20px;color:var(--muted);font-size:15px;text-decoration:underline;text-underline-offset:4px}
+  .hint{margin-top:12px;color:var(--muted);font-style:italic}
+
+  /* result */
+  .tally{font-family:var(--jp);font-size:60px;line-height:1.1;color:var(--gold);margin:30px 0 4px}
+  .tally small{font-size:26px;color:var(--muted)}
+  .missed{margin-top:28px;border-top:1px solid var(--edge)}
+  .missed li{padding:16px 0;border-bottom:1px solid var(--edge);list-style:none}
+  .missed ul{margin:0;padding:0}
+  .missed .q{font-size:15px;color:var(--muted);margin-bottom:6px}
+  .missed .a{font-family:var(--jp);font-size:20px;color:var(--right)}
+  .alt{margin-top:14px;width:100%;padding:15px;border:1px solid var(--edge);border-radius:10px;color:var(--muted)}
+
+  /* cards */
+  .card{
+    margin-top:22px;padding:36px 24px;
+    border:1px solid var(--edge);border-radius:12px;
+    background:var(--raised);
+    min-height:250px;
+    display:flex;flex-direction:column;justify-content:center;
+    text-align:center;
+  }
+  .card .front{font-family:var(--jp);font-size:38px;line-height:1.4}
+  .card .mean{font-size:18px;margin-top:4px}
+  .card .ex{font-family:var(--jp);font-size:23px;margin-top:22px;color:var(--gold);line-height:1.6}
+  .card .exen{font-size:14px;color:var(--muted);margin-top:8px}
+  .cardnav{display:flex;gap:10px;margin-top:14px}
+  .cardnav button{flex:1;padding:14px;border:1px solid var(--edge);border-radius:10px;color:var(--muted)}
+  .modes{display:flex;gap:8px;margin-top:20px}
+  .modes button{flex:1;padding:11px;border:1px solid var(--edge);border-radius:8px;font-size:15px;color:var(--muted)}
+  .modes button[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
+  .hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <main id="app"></main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
